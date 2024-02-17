@@ -1,13 +1,30 @@
 import { Router } from "express";
-import CartManager from "../CartManager.js";
+import CartManager from "../cartManager.js"
 
-const cartManager = new CartManager("carrito.json")
-const router = Router();
+const cartRoute = Router();
+const carro = new CartManager()
 
-//Rutas
+cartRoute.get("/:cid", async(req, res)=>{
+    const cid = req.params.cid
+    res.send(await carro.getCarrito(cid))
+})
 
-router.post("/", (req, res) => {});
-router.get("/:cid", (req, res) => {});
-router.get("/:cid/product/:pid", (res, req) => {})
+cartRoute.post("/",async (req, res) => {
+    const cart = res.send(await carro.createCart());
+})
 
-export default router;
+
+cartRoute.post("/:cid/product/:pid",async (req, res) => {
+    const pid = req.params.pid;
+    const cid = req.params.cid
+
+    const producto = res.send(await carro.addCarrito(parseInt(cid),parseInt(pid)));
+})
+
+cartRoute.delete("/:cid", async(req, res)=>{
+    const cid = req.params.cid
+    res.send(await carro.deleteCart(cid))
+})
+
+
+export default cartRoute
